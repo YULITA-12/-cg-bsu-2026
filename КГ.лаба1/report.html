@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Лабораторная работа №1 - Резун Ю. И.</title>
+  <!-- Библиотека MathJax для идеальных формул как в LaTeX -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono&display=swap');
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'EB Garamond', 'Times New Roman', serif;
+      font-size: 14pt;
+      line-height: 1.45;
+      color: #000;
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* Титульный лист в точности по стандарту БГУ */
+    .title-page {
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+      padding-top: 40px;
+      padding-bottom: 30px;
+    }
+
+    .title-header {
+      font-size: 14pt;
+      line-height: 1.3;
+    }
+
+    .title-center {
+      margin-top: 120px;
+      margin-bottom: 120px;
+    }
+
+    .title-center h1 {
+      font-size: 22pt;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .title-center h2 {
+      font-size: 17pt;
+      font-weight: normal;
+    }
+
+    .title-author {
+      text-align: right;
+      font-size: 14pt;
+      line-height: 1.4;
+      margin-right: 30px;
+      margin-bottom: 80px;
+    }
+
+    .title-footer {
+      font-size: 14pt;
+      text-align: center;
+    }
+
+    /* Разделитель страниц при печати в PDF */
+    .page-break {
+      page-break-before: always;
+      break-before: page;
+    }
+
+    /* Основной текст отчета */
+    h2.section-title {
+      font-size: 16pt;
+      font-weight: bold;
+      margin-top: 35px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 4px;
+    }
+
+    h3.sub-title {
+      font-size: 14pt;
+      font-weight: bold;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+
+    p, li {
+      text-align: justify;
+      margin-bottom: 8px;
+    }
+
+    ul, ol {
+      margin-top: 4px;
+      margin-bottom: 12px;
+      padding-left: 25px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      font-size: 12pt;
+    }
+
+    th, td {
+      border: 1px solid #333;
+      padding: 8px 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f5f5f5;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11pt;
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    @media print {
+      body {
+        margin: 0;
+        padding: 15mm 20mm;
+        max-width: 100%;
+      }
+      .title-page {
+        min-height: 98vh;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= ТИТУЛЬНЫЙ ЛИСТ ================= -->
+  <div class="title-page">
+    <div class="title-header">
+      <p>Белорусский государственный университет</p>
+      <p>Факультет прикладной математики и информатики</p>
+      <p>Кафедра информационных технологий и компьютерной графики</p>
+    </div>
+
+    <div class="title-center">
+      <h1>Лабораторная работа №1</h1>
+      <h2>«Цветовые модели: RGB, CMYK, HSV»</h2>
+    </div>
+
+    <div class="title-author">
+      <p><b>Выполнила:</b><br>
+      студентка 3 курса<br>
+      группы 4а<br>
+      Резун Юлия Игоревна</p>
+    </div>
+
+    <div class="title-footer">
+      <p>Минск, 2026</p>
+    </div>
+  </div>
+
+  <!-- Разрыв страницы для перехода к содержанию -->
+  <div class="page-break"></div>
+
+  <!-- ================= ОСНОВНОЙ ТЕКСТ ================= -->
+  <h2 class="section-title">1. Введение и задачи работы</h2>
+  <p><b>Цель работы:</b> исследование принципов построения аддитивных, субтрактивных и перцептивных цветовых пространств (RGB, CMYK, HSV), реализация математических алгоритмов взаимного перевода координат и создание интерактивного веб-приложения для визуализации и редактирования цвета одновременно в трёх моделях.</p>
+  
+  <p><b>Поставленные задачи:</b></p>
+  <ol>
+    <li>Изучить математический аппарат прямого и обратного преобразования между цветовыми пространствами \( \text{RGB} \leftrightarrow \text{CMYK} \) и \( \text{RGB} \leftrightarrow \text{HSV} \).</li>
+    <li>Спроектировать устойчивую архитектуру состояния приложения на базе концепции единого источника истины для исключения циклических каскадных обновлений и десинхронизации параметров.</li>
+    <li>Разработать клиентское веб-приложение, предоставляющее для каждой из моделей 3 независимых способа управления:
+      <ul>
+        <li>точный ввод числовых значений;</li>
+        <li>плавное изменение с помощью ползунков (слайдеров);</li>
+        <li>графический выбор цвета с помощью интерактивной палитры.</li>
+      </ul>
+    </li>
+    <li>Решить проблемы численной стабильности: корректную обработку вырождения цветового тона (\(H\)) при ахроматических цветах и нелинейность субтрактивной модели при предельных значениях черного компонента (\(K = 100\%\)).</li>
+  </ol>
+
+  <h2 class="section-title">2. Стек технологий и реализация</h2>
+  <p>Приложение реализовано в виде интерактивного одностраничного веб-приложения (Single Page Application):</p>
+  <ul>
+    <li><b>HTML5</b> — семантическая структура документа, нативные элементы управления (<code>&lt;input type="range"&gt;</code>, <code>&lt;input type="number"&gt;</code>, <code>&lt;input type="color"&gt;</code>).</li>
+    <li><b>CSS3</b> — адаптивная верстка на основе CSS Grid и Flexbox, стилизация элементов управления в тёмной теме интерфейса.</li>
+    <li><b>JavaScript (ES6+)</b> — математическое ядро преобразования цветовых координат, обработка событий пользовательского ввода и синхронизация всех моделей в реальном времени.</li>
+  </ul>
+
+  <h2 class="section-title">3. Математические преобразования моделей</h2>
+  <p>Для устранения избыточных связей все вычисления выполняются через промежуточный канонический базис — нормализованный вектор цвета:</p>
+  $$ \begin{pmatrix} r \\ g \\ b \end{pmatrix} \in [0, 1]^3, \quad r = \frac{R}{255}, \quad g = \frac{G}{255}, \quad b = \frac{B}{255} $$
+
+  <h3 class="sub-title">3.1. Преобразование RGB &harr; CMYK</h3>
+  <p>Модель CMYK является субтрактивной. Вектор \( (C, M, Y, K) \) нормируется к диапазону \( [0, 1] \) (в интерфейсе отображается в процентах \( [0, 100]\% \)).</p>
+  <p><b>Прямой перевод (RGB &rarr; CMYK):</b></p>
+  <p>1. Вычисляется черная компонента \( K \):</p>
+  $$ K = 1 - \max(r, g, b) $$
+  <p>2. Если \( K = 1 \) (абсолютно черный цвет), то \( C = 0, M = 0, Y = 0 \).</p>
+  <p>3. Иначе компоненты цвета определяются за вычетом черного пигмента:</p>
+  $$ C = \frac{1 - r - K}{1 - K}, \quad M = \frac{1 - g - K}{1 - K}, \quad Y = \frac{1 - b - K}{1 - K} $$
+
+  <p><b>Обратный перевод (CMYK &rarr; RGB):</b></p>
+  $$ r = (1 - C) \cdot (1 - K), \quad g = (1 - M) \cdot (1 - K), \quad b = (1 - Y) \cdot (1 - K) $$
+  <p>Полученные значения денормализуются: \( R = \lfloor r \cdot 255 \rceil, G = \lfloor g \cdot 255 \rceil, B = \lfloor b \cdot 255 \rceil \).</p>
+
+  <h3 class="sub-title">3.2. Преобразование RGB &harr; HSV</h3>
+  <p>HSV представляет цилиндрические координаты: цветовой тон \( H \in [0, 360)^\circ \), насыщенность \( S \in [0, 1] \), яркость \( V \in [0, 1] \).</p>
+  <p>Пусть \( M = \max(r, g, b) \), \( m = \min(r, g, b) \), \( \Delta = M - m \).</p>
+  <p><b>Прямой перевод (RGB &rarr; HSV):</b></p>
+  <p>1. Яркость: \( V = M \)</p>
+  <p>2. Насыщенность:</p>
+  $$ S = \begin{cases} 0, & \text{если } M = 0 \\ \frac{\Delta}{M}, & \text{если } M \neq 0 \end{cases} $$
+  <p>3. Цветовой тон \( H \):</p>
+  $$ H = \begin{cases} 0^\circ, & \text{если } \Delta = 0 \\ 60^\circ \cdot \left( \frac{g - b}{\Delta} \bmod 6 \right), & \text{если } M = r \\ 60^\circ \cdot \left( \frac{b - r}{\Delta} + 2 \right), & \text{если } M = g \\ 60^\circ \cdot \left( \frac{r - g}{\Delta} + 4 \right), & \text{если } M = b \end{cases} $$
+  <p>Если полученный угол \( H < 0^\circ \), выполняется циклический сдвиг: \( H \leftarrow H + 360^\circ \).</p>
+
+  <p><b>Обратный перевод (HSV &rarr; RGB):</b></p>
+  <p>Пусть \( h = \frac{H}{60^\circ} \), \( i = \lfloor h \rfloor \), \( f = h - i \). Вычисляются вспомогательные величины:</p>
+  $$ p = V(1 - S), \quad q = V(1 - f \cdot S), \quad t = V(1 - (1 - f) \cdot S) $$
+  <p>В зависимости от сектора \( i \bmod 6 \) вектор \( (r, g, b) \) принимает значения: \( (V, t, p) \), \( (q, V, p) \), \( (p, V, t) \), \( (p, q, V) \), \( (t, p, V) \), \( (V, p, q) \).</p>
+
+  <h2 class="section-title">4. Архитектура синхронизации моделей</h2>
+  <p>Главный вызов при взаимной синхронизации трёх моделей — устранение бесконечного каскадного зацикливания событий пользовательского ввода (event loop). Для решения данной проблемы внедрен механизм флаговой блокировки <code>isUpdating</code>:</p>
+  <ul>
+    <li>При изменении любого параметра входные данные преобразуются в нормализованный базис RGB.</li>
+    <li>Перед запуском записи значений в поля других моделей выставляется флаг <code>isUpdating = true</code>.</li>
+    <li>Производится атомарное обновление всех ползунков, числовых полей и превью цвета.</li>
+    <li>После завершения пересчёта флаг сбрасывается в <code>false</code>. Любые повторные триггеры отсекаются условием <code>if (isUpdating) return;</code>.</li>
+  </ul>
+
+  <h2 class="section-title">5. Реализация интерфейса</h2>
+  <table>
+    <tr>
+      <th>Способ ввода</th>
+      <th>RGB</th>
+      <th>CMYK</th>
+      <th>HSV</th>
+    </tr>
+    <tr>
+      <td><b>1. Числовой ввод</b></td>
+      <td>Поля для R, G, B (0..255)</td>
+      <td>Поля для C, M, Y, K (0..100%)</td>
+      <td>Поля для H (0..360&deg;), S, V (0..100%)</td>
+    </tr>
+    <tr>
+      <td><b>2. Ползунки</b></td>
+      <td>3 слайдера координат</td>
+      <td>4 слайдера координат</td>
+      <td>3 слайдера координат</td>
+    </tr>
+    <tr>
+      <td><b>3. Графическая палитра</b></td>
+      <td colspan="3" style="text-align: center;">Встроенная системная палитра выбора цвета с синхронным пересчетом</td>
+    </tr>
+  </table>
+
+  <h2 class="section-title">6. Выводы</h2>
+  <ol>
+    <li>Были изучены основы построения аддитивных (RGB), субтрактивных (CMYK) и перцептивных (HSV) цветовых пространств.</li>
+    <li>Реализован математический аппарат прямого и обратного взаимного перевода через канонический нормализованный вектор RGB.</li>
+    <li>Разработано интерактивное веб-приложение, полностью выполняющее требования лабораторной работы (3 способа управления параметрами, мгновенная обратная связь и защита от зацикливания).</li>
+  </ol>
+
+</body>
+</html>

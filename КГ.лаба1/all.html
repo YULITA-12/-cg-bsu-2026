@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Лабораторная работа: Цветовые модели</title>
+  <style>
+    :root {
+      --bg-app: #121214;
+      --card-bg: #1e1e24;
+      --text-main: #ffffff;
+      --text-sub: #a0a0b2;
+      --accent: #6c5ce7;
+      --border: #2e2e38;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .app-window {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+      width: 900px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .preview-section {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 30px;
+      background: #18181c;
+      padding: 15px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .color-display {
+      flex: 1;
+      height: 70px;
+      border-radius: 10px;
+      border: 2px solid rgba(255,255,255,0.1);
+      transition: background-color 0.1s ease;
+    }
+
+    .picker-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .picker-box label {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    input[type="color"] {
+      -webkit-appearance: none;
+      border: none;
+      width: 50px;
+      height: 40px;
+      border-radius: 8px;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .models-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .model-card {
+      background: #18181c;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .model-card h2 {
+      font-size: 16px;
+      color: var(--accent);
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .control-row {
+      margin-bottom: 14px;
+    }
+
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 6px;
+      color: var(--text-sub);
+    }
+
+    .control-inputs {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    input[type="number"] {
+      width: 60px;
+      background: #25252b;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: #fff;
+      padding: 5px 8px;
+      font-size: 13px;
+      text-align: right;
+    }
+
+    input[type="number"]:focus {
+      outline: 1px solid var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-window">
+    <h1>Выбор и конвертация цвета (RGB - CMYK - HSV)</h1>
+
+    <!-- Предпросмотр и палитра -->
+    <div class="preview-section">
+      <div id="colorDisplay" class="color-display"></div>
+      <div class="picker-box">
+        <label>Палитра:</label>
+        <input type="color" id="nativePicker" value="#ff3b30">
+      </div>
+    </div>
+
+    <!-- Модели -->
+    <div class="models-grid">
+      
+      <!-- Карточка 1: RGB -->
+      <div class="model-card">
+        <h2>RGB</h2>
+        <div class="control-row">
+          <div class="control-label"><span>Red (Красный)</span></div>
+          <div class="control-inputs">
+            <input type="range" id="r_rng" min="0" max="255">
+            <input type="number" id="r_num" min="0" max="255">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-label"><span>Green (Зеленый)</span></div>
+          <div class="control-inputs">
+            <input type="range" id="g_rng" min="0" max="255">
+            <input type="number" id="g_num" min="0" max="255">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-label"><span>Blue (Синий)</span></div>
+          <div class="control-inputs">
+            <input type="range" id="b_rng" min="0" max="255">
+            <input type="number" id="b_num" min="0" max="255">
+          </div>
+        </div>
+      </div>
+
+      <!-- Карточка 2: CMYK -->
+      <div class="model-card">
+        <h2>CMYK</h2>
+        <div class="control-row">
+          <div class="control-label"><span>Cyan (%)</span></div>
+          <div class="control-inputs">
+            <input type="range" id="c_rng" min="0" max="100">
+            <input type="number" id="c_num" min="0" max="100">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-label"><span>Magenta (%)</span></div>
+          <div class="control-inputs">
+            <input type="range" id="m_rng" min="0" max="100">
+            <input type="number" id="m_num" min="0" max="100">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-label"><span>Yellow (%)</span></div>
+          <div class="control-inputs">
+            <input type="range" id="y_rng" min="0" max="100">
+            <input type="number" id="y_num" min="0" max="100">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-label"><span>Key / Black (%)</span></div>
+          <div class="control-inputs">
+            <input type="range" id="k_rng" min="0" max="100">
+            <input type="number" id="k_num" min="0" max="100">
+          </div>
+        </div>
+      </div>
+
+      <!-- Карточка 3: HSV -->
+      <div class="model-card">
+        <h2>HSV</h2>
+        <div class="control-row">
+          <div class="control-label"><span>Hue (Тон 0-360°)</span></div>
+          <div class="control-inputs">
+            <input type="range" id="h_rng" min="0" max="360">
+            <input type="number" id="h_num" min="0" max="360">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-label"><span>Saturation (%)</span></div>
+          <div class="control-inputs">
+            <input type="range" id="s_rng" min="0" max="100">
+            <input type="number" id="s_num" min="0" max="100">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-label"><span>Value / Яркость (%)</span></div>
+          <div class="control-inputs">
+            <input type="range" id="v_rng" min="0" max="100">
+            <input type="number" id="v_num" min="0" max="100">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let isUpdating = false;
+
+    // --- ФОРМУЛЫ ПЕРЕСЧЕТА ---
+    function rgbToCmyk(r, g, b) {
+      let rn = r / 255, gn = g / 255, bn = b / 255;
+      let k = 1 - Math.max(rn, gn, bn);
+      if (k === 1) return { c: 0, m: 0, y: 0, k: 100 };
+      let c = (1 - rn - k) / (1 - k);
+      let m = (1 - gn - k) / (1 - k);
+      let y = (1 - bn - k) / (1 - k);
+      return { c: Math.round(c * 100), m: Math.round(m * 100), y: Math.round(y * 100), k: Math.round(k * 100) };
+    }
+
+    function cmykToRgb(c, m, y, k) {
+      let cn = c / 100, mn = m / 100, yn = y / 100, kn = k / 100;
+      let r = 255 * (1 - cn) * (1 - kn);
+      let g = 255 * (1 - mn) * (1 - kn);
+      let b = 255 * (1 - yn) * (1 - kn);
+      return { r: Math.round(r), g: Math.round(g), b: Math.round(b) };
+    }
+
+    function rgbToHsv(r, g, b) {
+      let rn = r / 255, gn = g / 255, bn = b / 255;
+      let max = Math.max(rn, gn, bn), min = Math.min(rn, gn, bn);
+      let h, s, v = max;
+      let d = max - min;
+      s = max === 0 ? 0 : d / max;
+      if (max === min) {
+        h = 0;
+      } else {
+        switch (max) {
+          case rn: h = (gn - bn) / d + (gn < bn ? 6 : 0); break;
+          case gn: h = (bn - rn) / d + 2; break;
+          case bn: h = (rn - gn) / d + 4; break;
+        }
+        h /= 6;
+      }
+      return { h: Math.round(h * 360), s: Math.round(s * 100), v: Math.round(v * 100) };
+    }
+
+    function hsvToRgb(h, s, v) {
+      let hn = h / 360, sn = s / 100, vn = v / 100;
+      let r, g, b;
+      let i = Math.floor(hn * 6);
+      let f = hn * 6 - i;
+      let p = vn * (1 - sn);
+      let q = vn * (1 - f * sn);
+      let t = vn * (1 - (1 - f) * sn);
+      switch (i % 6) {
+        case 0: r = vn; g = t; b = p; break;
+        case 1: r = q; g = vn; b = p; break;
+        case 2: r = p; g = vn; b = t; break;
+        case 3: r = p; g = q; b = vn; break;
+        case 4: r = t; g = p; b = vn; break;
+        case 5: r = vn; g = p; b = q; break;
+      }
+      return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
+    }
+
+    // --- ОБНОВЛЕНИЕ UI ---
+    function updateAll(rgb, cmyk, hsv) {
+      isUpdating = true;
+
+      setInputs('r', rgb.r); setInputs('g', rgb.g); setInputs('b', rgb.b);
+      setInputs('c', cmyk.c); setInputs('m', cmyk.m); setInputs('y', cmyk.y); setInputs('k', cmyk.k);
+      setInputs('h', hsv.h); setInputs('s', hsv.s); setInputs('v', hsv.v);
+
+      let hex = "#" + [rgb.r, rgb.g, rgb.b].map(x => x.toString(16).padStart(2, '0')).join('');
+      document.getElementById('colorDisplay').style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+      document.getElementById('nativePicker').value = hex;
+
+      isUpdating = false;
+    }
+
+    function setInputs(prefix, val) {
+      document.getElementById(`${prefix}_rng`).value = val;
+      document.getElementById(`${prefix}_num`).value = val;
+    }
+
+    function onRgbChange() {
+      if (isUpdating) return;
+      let r = +document.getElementById('r_rng').value;
+      let g = +document.getElementById('g_rng').value;
+      let b = +document.getElementById('b_rng').value;
+      updateAll({r, g, b}, rgbToCmyk(r, g, b), rgbToHsv(r, g, b));
+    }
+
+    function onCmykChange() {
+      if (isUpdating) return;
+      let c = +document.getElementById('c_rng').value;
+      let m = +document.getElementById('m_rng').value;
+      let y = +document.getElementById('y_rng').value;
+      let k = +document.getElementById('k_rng').value;
+      let rgb = cmykToRgb(c, m, y, k);
+      updateAll(rgb, {c, m, y, k}, rgbToHsv(rgb.r, rgb.g, rgb.b));
+    }
+
+    function onHsvChange() {
+      if (isUpdating) return;
+      let h = +document.getElementById('h_rng').value;
+      let s = +document.getElementById('s_rng').value;
+      let v = +document.getElementById('v_rng').value;
+      let rgb = hsvToRgb(h, s, v);
+      updateAll(rgb, rgbToCmyk(rgb.r, rgb.g, rgb.b), {h, s, v});
+    }
+
+    function linkInputs(idPrefix, callback) {
+      let rng = document.getElementById(`${idPrefix}_rng`);
+      let num = document.getElementById(`${idPrefix}_num`);
+      rng.addEventListener('input', () => { num.value = rng.value; callback(); });
+      num.addEventListener('input', () => { rng.value = num.value; callback(); });
+    }
+
+    ['r', 'g', 'b'].forEach(id => linkInputs(id, onRgbChange));
+    ['c', 'm', 'y', 'k'].forEach(id => linkInputs(id, onCmykChange));
+    ['h', 's', 'v'].forEach(id => linkInputs(id, onHsvChange));
+
+    document.getElementById('nativePicker').addEventListener('input', (e) => {
+      let hex = e.target.value;
+      let r = parseInt(hex.substr(1, 2), 16);
+      let g = parseInt(hex.substr(3, 2), 16);
+      let b = parseInt(hex.substr(5, 2), 16);
+      updateAll({r, g, b}, rgbToCmyk(r, g, b), rgbToHsv(r, g, b));
+    });
+
+    // Начальный цвет
+    updateAll({r: 255, g: 59, b: 48}, rgbToCmyk(255, 59, 48), rgbToHsv(255, 59, 48));
+  </script>
+</body>
+</html>
