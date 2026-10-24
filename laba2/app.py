@@ -1,0 +1,97 @@
+import streamlit as st
+import cv2
+import numpy as np
+from PIL import Image
+
+# Настройка страницы
+st.set_page_config(page_title="Лабораторная работа 2 (Вариант 12)", layout="wide")
+
+st.title("Лабораторная работа 2. Вариант 12")
+st.write("Выполнил студент: Вариант 12 (Локальная пороговая обработка + Низкочастотные фильтры)")
+
+# Загрузка изображения
+uploaded_file = st.sidebar.file_uploader("Загрузите картинку", type=["jpg", "jpeg", "png", "bmp"])
+
+if uploaded_file is not None:
+    # Считываем картинку
+    image = Image.open(uploaded_file)
+    img_array = np.array(image)
+
+    # Боковая панель с выбором режима
+    st.sidebar.header("Параметры обработки")
+    task = st.sidebar.radio(
+        "Выберите операцию:",
+        ("1. Локальная пороговая обработка (Ч/Б)", "2. Низкочастотное сглаживание (Размытие)")
+    )
+
+    result_image = None
+    info_text = ""
+
+    # ==========================================
+    # ЗАДАЧА 1: ЛОКАЛЬНАЯ ПОРОГОВАЯ ОБРАБОТКА
+    # ==========================================
+    if task == "1. Локальная пороговая обработка (Ч/Б)":
+        st.sidebar.subheader("Настройки бинаризации")
+        method = st.sidebar.selectbox(
+            "Метод локального порога:",
+            ("Метод 1: Адаптивный по среднему (Mean)", "Метод 2: Адаптивный по Гауссу (Gaussian)")
+        )
+        
+        # Размер окна (должен быть нечетным: 3, 5, 7, ...)
+        block_size = st.sidebar.slider("Размер локального окна (Block Size):", min_value=3, max_value=51, value=15, step=2)
+        # Константа вычитания C
+        c_val = st.sidebar.slider("Константа C (поправка порога):", min_value=0, max_value=30, value=8, step=1)
+
+        # Переводим картинку в оттенки серого
+        if len(img_array.shape) == 3:
+            gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
+        else:
+            gray = img_array
+
+        if method == "Метод 1: Адаптивный по среднему (Mean)":
+            # Порог = средняя яркость в окне минус C
+            result_image = cv2.adaptiveThreshold(
+                gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, block_size, c_val
+            )
+            info_text = f"**Использован метод среднего.** Окно: {block_size}x{block_size}, C = {c_val}."
+        else:
+            # Порог = взвешенное среднее по Гауссу минус C
+            result_image = cv2.adaptiveThreshold(
+                gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, block_size, c_val
+            )
+            info_text = f"**Использован метод Гаусса.** Окно: {block_size}x{block_size}, C = {c_val}."
+
+    # ==========================================
+    # ЗАДАЧА 2: НИЗКОЧАСТОТНЫЕ ФИЛЬТРЫ
+    # ==========================================
+    else:
+        st.sidebar.subheader("Настройки фильтрации")
+        filter_type = st.sidebar.selectbox(
+            "Тип сглаживающего фильтра:",
+            ("Усредняющий фильтр (Box Filter)", "Фильтр Гаусса (Gaussian Blur)")
+        )
+        kernel_size = st.sidebar.slider("Размер ядра сглаживания:", min_value=3, max_value=31, value=5, step=2)
+
+        if filter_type == "Усредняющий фильтр (Box Filter)":
+            # Простое скользящее среднее
+            result_image = cv2.blur(img_array, (kernel_size, kernel_size))
+            info_text = f"**Применен усредняющий фильтр** с ядром {kernel_size}x{kernel_size}."
+        else:
+            # Размытие по нормальному распределению
+            result_image = cv2.GaussianBlur(img_array, (kernel_size, kernel_size), 0)
+            info_text = f"**Применен фильтр Гаусса** с ядром {kernel_size}x{kernel_size}."
+
+    # Вывод результатов бок о бок
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("Оригинал")
+        st.image(image, use_container_width=True)
+
+    with col2:
+        st.subheader("Результат")
+        st.image(result_image, use_container_width=True)
+
+    st.info(info_text)
+
+else:
+    st.info("👈 Загрузите картинку в меню слева, чтобы начать работу!")
